@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Selenium: Current File",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/e2e/goal-tracker.test.js",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "HEADLESS": "false"
+      },
+      "runtimeArgs": [
+        "--test",
+        "--test-concurrency=1"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Debug Selenium: Specific Test",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/e2e/goal-tracker.test.js",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "HEADLESS": "false"
+      },
+      "runtimeArgs": [
+        "--test",
+        "--test-concurrency=1",
+        "--test-name-pattern=${input:testName}"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testName",
+      "type": "promptString",
+      "description": "Test name or matching text",
+      "default": "direction info icon"
+    }
+  ]
+}
