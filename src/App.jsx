@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   Activity, ArrowRight, BarChart3, CalendarDays, Check, ChevronLeft,
-  Clock3, Copy, Download, Flag, History, LayoutDashboard, Menu, Plus,
+  Clock3, Copy, Download, Flag, History, Info, LayoutDashboard, Menu, Plus,
   Moon, Pencil, RotateCcw, Settings2, Sparkles, Sun, Target, Trash2, TrendingUp, Upload, X,
 } from 'lucide-react'
 import {
@@ -123,6 +123,7 @@ function Modal({ children, onClose, wide = false }) {
 
 function SetupWizard({ onFinish, onCancel, allowCancel = false }) {
   const [step, setStep] = useState(0)
+  const [showDirectionHelp, setShowDirectionHelp] = useState(false)
   const [draft, setDraft] = useState({ ...defaultGoal, endDate: new Date(Date.now() + 90 * DAY).toISOString().slice(0, 10) })
   const [created, setCreated] = useState([])
   const steps = ['Goal', 'Timeline', 'Measurement', 'Values', 'Weekly target', 'Another goal?']
@@ -173,7 +174,17 @@ function SetupWizard({ onFinish, onCancel, allowCancel = false }) {
         {step === 2 && <div className="space-y-5">
           <div><label className="label">How should progress be measured?</label><input data-testid="goal-measurement-input" autoFocus className="field" placeholder="e.g. Dollars saved, workouts completed" value={draft.measurement} onChange={(e) => update('measurement', e.target.value)} /></div>
           <div><label className="label">Unit of measurement</label><input data-testid="goal-unit-input" className="field" placeholder="e.g. dollars, workouts, pounds" value={draft.unit} onChange={(e) => update('unit', e.target.value)} /></div>
-          <div><label className="label">Direction</label><div className="grid gap-2 sm:grid-cols-3">
+          <div><div className="mb-1.5 flex items-center gap-1.5"><label className="label mb-0">Direction</label><button data-testid="direction-info-button" type="button" aria-label="Explain goal directions" aria-expanded={showDirectionHelp} className="rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600" onClick={() => setShowDirectionHelp((visible) => !visible)}><Info size={15} /></button></div>
+          {showDirectionHelp && <div data-testid="direction-info-panel" className="mb-4 rounded-xl border bg-slate-50 p-4 text-sm text-slate-600">
+            <div className="flex items-start justify-between gap-3"><p className="font-semibold text-slate-900">Direction determines how activity changes your goal’s progress.</p><button type="button" aria-label="Close direction help" className="shrink-0 rounded-lg p-1 text-slate-400 hover:bg-white hover:text-slate-700" onClick={() => setShowDirectionHelp(false)}><X size={15} /></button></div>
+            <div className="mt-4 space-y-4">
+              <div><p className="font-semibold text-slate-900">Increase value</p><p className="mt-1">Your current value grows toward the target. Examples: save $5,000, work 100 hours, or earn $10,000. Logging 100 dollars adds 100.</p></div>
+              <div><p className="font-semibold text-slate-900">Decrease value</p><p className="mt-1">Your current value falls toward the target. Examples: reduce weight from 200 to 180 pounds or pay debt from $10,000 to $0. Log a new current value or an amount to subtract.</p></div>
+              <div><p className="font-semibold text-slate-900">Complete count</p><p className="mt-1">You count completed actions toward a target. Examples: complete 48 workouts, read 12 books, or submit 30 applications. Logging 2 workouts adds 2.</p></div>
+            </div>
+            <p className="mt-4 border-t pt-3 text-xs">Increase value and Complete count behave similarly. The distinction describes a growing measurement versus finished actions.</p>
+          </div>}
+          <div className="grid gap-2 sm:grid-cols-3">
             {[['increase', 'Increase value'], ['decrease', 'Decrease value'], ['count', 'Complete count']].map(([value, label]) => <button key={value} onClick={() => update('direction', value)} className={`rounded-xl border px-3 py-3 text-sm font-semibold ${draft.direction === value ? 'border-brand-500 bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50'}`}>{label}</button>)}
           </div></div>
         </div>}

@@ -81,6 +81,28 @@ test('clicking New goal displays the goal creation flow', async () => {
   assert.equal(await driver.findElement(By.xpath("//*[normalize-space()='Goal setup']")).isDisplayed(), true)
 })
 
+test('direction info icon displays goal direction guidance', async () => {
+  const next = async () => driver.findElement(By.css('[data-testid="goal-setup-next"]')).click()
+
+  await driver.findElement(By.css('[data-testid="new-goal-button"]')).click()
+  await driver.findElement(By.css('[data-testid="goal-name-input"]')).sendKeys('Test direction help')
+  await next()
+  await next()
+
+  const infoButton = await driver.wait(until.elementLocated(By.css('[data-testid="direction-info-button"]')), 5000)
+  assert.equal(await infoButton.isDisplayed(), true)
+  assert.equal(await infoButton.getAttribute('aria-expanded'), 'false')
+
+  await infoButton.click()
+  const infoPanel = await driver.wait(until.elementLocated(By.css('[data-testid="direction-info-panel"]')), 5000)
+  const guidance = await infoPanel.getText()
+  assert.equal(await infoButton.getAttribute('aria-expanded'), 'true')
+  assert.match(guidance, /Direction determines how activity changes your goal’s progress/)
+  assert.match(guidance, /Increase value/)
+  assert.match(guidance, /Decrease value/)
+  assert.match(guidance, /Complete count/)
+})
+
 test('creating a goal displays a complete goal card with progress bars', async () => {
   const next = async () => driver.findElement(By.css('[data-testid="goal-setup-next"]')).click()
   const replaceValue = async (testId, value) => {
